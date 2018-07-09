@@ -25,3 +25,5 @@ if(MSVC)
 else()
     install(TARGETS simple_parallel_analyzer LIBRARY DESTINATION ".")
 endif()
+
+set_post_build_destination(simple_parallel_analyzer)
