@@ -17,13 +17,4 @@ src/SimpleParallelSimulationDataGenerator.cpp
 src/SimpleParallelSimulationDataGenerator.h
 )
 
-add_library(simple_parallel_analyzer SHARED ${SOURCES})
-target_link_libraries(simple_parallel_analyzer PRIVATE Saleae::AnalyzerSDK)
-
-if(MSVC)
-    install(TARGETS simple_parallel_analyzer RUNTIME DESTINATION "Analyzers")
-else()
-    install(TARGETS simple_parallel_analyzer LIBRARY DESTINATION "Analyzers")
-endif()
-
-set_post_build_destination(simple_parallel_analyzer)
+add_analyzer_plugin(simple_parallel_analyzer SOURCES ${SOURCES})

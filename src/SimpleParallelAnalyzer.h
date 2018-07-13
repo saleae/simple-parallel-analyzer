@@ -6,7 +6,7 @@
 #include "SimpleParallelSimulationDataGenerator.h"
 
 class SimpleParallelAnalyzerSettings;
-class ANALYZER_EXPORT SimpleParallelAnalyzer : public Analyzer2
+class SimpleParallelAnalyzer : public Analyzer2
 {
 public:
 	SimpleParallelAnalyzer();
