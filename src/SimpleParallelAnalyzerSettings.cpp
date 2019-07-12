@@ -32,9 +32,9 @@ SimpleParallelAnalyzerSettings::SimpleParallelAnalyzerSettings()
 	mClockChannelInterface->SetChannel( mClockChannel );
 
 	mClockEdgeInterface.reset( new AnalyzerSettingInterfaceNumberList() );
-	mClockEdgeInterface->SetTitleAndTooltip( "", "" );
-	mClockEdgeInterface->AddNumber( AnalyzerEnums::PosEdge, "Data is valid on Clock rising edge", "Data is valid on Clock rising edge" );
-	mClockEdgeInterface->AddNumber( AnalyzerEnums::NegEdge, "Data is valid on Clock falling edge", "Data is valid on Clock falling edge" );
+	mClockEdgeInterface->SetTitleAndTooltip( "Clock State", "Define whether the data is valid on Clock rising or falling edge" );
+	mClockEdgeInterface->AddNumber( AnalyzerEnums::PosEdge, "Rising edge", "" );
+	mClockEdgeInterface->AddNumber( AnalyzerEnums::NegEdge, "Falling edge", "" );
 	mClockEdgeInterface->SetNumber( mClockEdge );
 
 
