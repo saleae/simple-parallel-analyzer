@@ -19,11 +19,11 @@ void SimpleParallelAnalyzer::SetupResults()
 {
 	mResults.reset( new SimpleParallelAnalyzerResults( this, mSettings.get() ) );
 	SetAnalyzerResults( mResults.get() );
+	mResults->AddChannelBubblesWillAppearOn( mSettings->mClockChannel );
 }
 
 void SimpleParallelAnalyzer::WorkerThread()
 {
-	mResults->AddChannelBubblesWillAppearOn( mSettings->mClockChannel );
 
 	mSampleRateHz = GetSampleRate();
 
