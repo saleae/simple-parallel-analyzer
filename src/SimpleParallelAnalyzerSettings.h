@@ -6,26 +6,26 @@
 
 class SimpleParallelAnalyzerSettings : public AnalyzerSettings
 {
-public:
-	SimpleParallelAnalyzerSettings();
-	virtual ~SimpleParallelAnalyzerSettings();
+  public:
+    SimpleParallelAnalyzerSettings();
+    virtual ~SimpleParallelAnalyzerSettings();
 
-	virtual bool SetSettingsFromInterfaces();
-	void UpdateInterfacesFromSettings();
-	virtual void LoadSettings( const char* settings );
-	virtual const char* SaveSettings();
+    virtual bool SetSettingsFromInterfaces();
+    void UpdateInterfacesFromSettings();
+    virtual void LoadSettings( const char* settings );
+    virtual const char* SaveSettings();
 
-	
-	std::vector< Channel > mDataChannels;
-	Channel mClockChannel;
 
-	AnalyzerEnums::EdgeDirection mClockEdge;
+    std::vector<Channel> mDataChannels;
+    Channel mClockChannel;
 
-protected:
-	std::vector< AnalyzerSettingInterfaceChannel* > mDataChannelsInterface;
+    AnalyzerEnums::EdgeDirection mClockEdge;
 
-	std::auto_ptr< AnalyzerSettingInterfaceChannel >	mClockChannelInterface;
-	std::auto_ptr< AnalyzerSettingInterfaceNumberList >	mClockEdgeInterface;
+  protected:
+    std::vector<AnalyzerSettingInterfaceChannel*> mDataChannelsInterface;
+
+    std::auto_ptr<AnalyzerSettingInterfaceChannel> mClockChannelInterface;
+    std::auto_ptr<AnalyzerSettingInterfaceNumberList> mClockEdgeInterface;
 };
 
-#endif //SIMPLEPARALLEL_ANALYZER_SETTINGS
+#endif // SIMPLEPARALLEL_ANALYZER_SETTINGS

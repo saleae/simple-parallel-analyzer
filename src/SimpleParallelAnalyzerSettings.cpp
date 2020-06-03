@@ -3,162 +3,158 @@
 #include <stdio.h>
 
 
-#pragma warning( disable : 4996 ) //warning C4996: 'sprintf': This function or variable may be unsafe
+#pragma warning( disable : 4996 ) // warning C4996: 'sprintf': This function or variable may be unsafe
 
-SimpleParallelAnalyzerSettings::SimpleParallelAnalyzerSettings()
-:
-	mClockChannel( UNDEFINED_CHANNEL ),
-	mClockEdge( AnalyzerEnums::PosEdge )
+SimpleParallelAnalyzerSettings::SimpleParallelAnalyzerSettings() : mClockChannel( UNDEFINED_CHANNEL ), mClockEdge( AnalyzerEnums::PosEdge )
 {
-	U32 count = 16;
-	for( U32 i=0; i<count; i++ )
-	{
-		mDataChannels.push_back( UNDEFINED_CHANNEL );
-		AnalyzerSettingInterfaceChannel* data_channel_interface = new AnalyzerSettingInterfaceChannel();
-		
-		char text[64];
-		sprintf( text, "D%d", i );
+    U32 count = 16;
+    for( U32 i = 0; i < count; i++ )
+    {
+        mDataChannels.push_back( UNDEFINED_CHANNEL );
+        AnalyzerSettingInterfaceChannel* data_channel_interface = new AnalyzerSettingInterfaceChannel();
 
-		data_channel_interface->SetTitleAndTooltip( text, text );
-		data_channel_interface->SetChannel( mDataChannels[i] );
-		data_channel_interface->SetSelectionOfNoneIsAllowed( true );
+        char text[ 64 ];
+        sprintf( text, "D%d", i );
 
-		mDataChannelsInterface.push_back( data_channel_interface );
-	}
+        data_channel_interface->SetTitleAndTooltip( text, text );
+        data_channel_interface->SetChannel( mDataChannels[ i ] );
+        data_channel_interface->SetSelectionOfNoneIsAllowed( true );
 
-
-	mClockChannelInterface.reset( new AnalyzerSettingInterfaceChannel() );
-	mClockChannelInterface->SetTitleAndTooltip( "Clock", "Clock" );
-	mClockChannelInterface->SetChannel( mClockChannel );
-
-	mClockEdgeInterface.reset( new AnalyzerSettingInterfaceNumberList() );
-	mClockEdgeInterface->SetTitleAndTooltip( "Clock State", "Define whether the data is valid on Clock rising or falling edge" );
-	mClockEdgeInterface->AddNumber( AnalyzerEnums::PosEdge, "Rising edge", "" );
-	mClockEdgeInterface->AddNumber( AnalyzerEnums::NegEdge, "Falling edge", "" );
-	mClockEdgeInterface->SetNumber( mClockEdge );
+        mDataChannelsInterface.push_back( data_channel_interface );
+    }
 
 
+    mClockChannelInterface.reset( new AnalyzerSettingInterfaceChannel() );
+    mClockChannelInterface->SetTitleAndTooltip( "Clock", "Clock" );
+    mClockChannelInterface->SetChannel( mClockChannel );
 
-	for( U32 i=0; i<count; i++ )
-	{
-		AddInterface( mDataChannelsInterface[i] );
-	}
+    mClockEdgeInterface.reset( new AnalyzerSettingInterfaceNumberList() );
+    mClockEdgeInterface->SetTitleAndTooltip( "Clock State", "Define whether the data is valid on Clock rising or falling edge" );
+    mClockEdgeInterface->AddNumber( AnalyzerEnums::PosEdge, "Rising edge", "" );
+    mClockEdgeInterface->AddNumber( AnalyzerEnums::NegEdge, "Falling edge", "" );
+    mClockEdgeInterface->SetNumber( mClockEdge );
 
-	AddInterface( mClockChannelInterface.get() );
-	AddInterface( mClockEdgeInterface.get() );
 
-	AddExportOption( 0, "Export as text/csv file" );
-	AddExportExtension( 0, "text", "txt" );
-	AddExportExtension( 0, "csv", "csv" );
+    for( U32 i = 0; i < count; i++ )
+    {
+        AddInterface( mDataChannelsInterface[ i ] );
+    }
 
-	ClearChannels();
-	for( U32 i=0; i<count; i++ )
-	{
-		char text[64];
-		sprintf( text, "D%d", i );
-		AddChannel( mDataChannels[i], text, false );
-	}
+    AddInterface( mClockChannelInterface.get() );
+    AddInterface( mClockEdgeInterface.get() );
 
-	AddChannel( mClockChannel, "Clock", false );
+    AddExportOption( 0, "Export as text/csv file" );
+    AddExportExtension( 0, "text", "txt" );
+    AddExportExtension( 0, "csv", "csv" );
+
+    ClearChannels();
+    for( U32 i = 0; i < count; i++ )
+    {
+        char text[ 64 ];
+        sprintf( text, "D%d", i );
+        AddChannel( mDataChannels[ i ], text, false );
+    }
+
+    AddChannel( mClockChannel, "Clock", false );
 }
 
 SimpleParallelAnalyzerSettings::~SimpleParallelAnalyzerSettings()
 {
-	U32 count = mDataChannelsInterface.size();
-	for( U32 i=0; i<count; i++ )
-		delete mDataChannelsInterface[i];
+    U32 count = mDataChannelsInterface.size();
+    for( U32 i = 0; i < count; i++ )
+        delete mDataChannelsInterface[ i ];
 }
 
 bool SimpleParallelAnalyzerSettings::SetSettingsFromInterfaces()
 {
-	U32 count = mDataChannels.size();
-	U32 num_used_channels = 0;
-	for( U32 i=0; i<count; i++ )
-	{
-		if( mDataChannelsInterface[i]->GetChannel() != UNDEFINED_CHANNEL )
-			num_used_channels++;
-	}
+    U32 count = mDataChannels.size();
+    U32 num_used_channels = 0;
+    for( U32 i = 0; i < count; i++ )
+    {
+        if( mDataChannelsInterface[ i ]->GetChannel() != UNDEFINED_CHANNEL )
+            num_used_channels++;
+    }
 
-	if( num_used_channels == 0 )
-	{
-		SetErrorText( "Please select at least one channel to use in the parallel bus" );
-		return false;
-	}
+    if( num_used_channels == 0 )
+    {
+        SetErrorText( "Please select at least one channel to use in the parallel bus" );
+        return false;
+    }
 
-	for( U32 i=0; i<count; i++ )
-	{
-		mDataChannels[i] = mDataChannelsInterface[i]->GetChannel();
-	}
+    for( U32 i = 0; i < count; i++ )
+    {
+        mDataChannels[ i ] = mDataChannelsInterface[ i ]->GetChannel();
+    }
 
-	mClockChannel = mClockChannelInterface->GetChannel();
-	mClockEdge = AnalyzerEnums::EdgeDirection( U32( mClockEdgeInterface->GetNumber() ) );
+    mClockChannel = mClockChannelInterface->GetChannel();
+    mClockEdge = AnalyzerEnums::EdgeDirection( U32( mClockEdgeInterface->GetNumber() ) );
 
-	ClearChannels();
-	for( U32 i=0; i<count; i++ )
-	{
-		char text[64];
-		sprintf( text, "D%d", i );
-		AddChannel( mDataChannels[i], text, mDataChannels[i] != UNDEFINED_CHANNEL );
-	}
+    ClearChannels();
+    for( U32 i = 0; i < count; i++ )
+    {
+        char text[ 64 ];
+        sprintf( text, "D%d", i );
+        AddChannel( mDataChannels[ i ], text, mDataChannels[ i ] != UNDEFINED_CHANNEL );
+    }
 
-	AddChannel( mClockChannel, "Clock", true );
+    AddChannel( mClockChannel, "Clock", true );
 
-	return true;
+    return true;
 }
 
 void SimpleParallelAnalyzerSettings::UpdateInterfacesFromSettings()
 {
-	U32 count = mDataChannels.size();
-	for( U32 i=0; i<count; i++ )
-	{
-		mDataChannelsInterface[i]->SetChannel( mDataChannels[i] );
-	}
+    U32 count = mDataChannels.size();
+    for( U32 i = 0; i < count; i++ )
+    {
+        mDataChannelsInterface[ i ]->SetChannel( mDataChannels[ i ] );
+    }
 
-	mClockChannelInterface->SetChannel( mClockChannel );
-	mClockEdgeInterface->SetNumber( mClockEdge );
+    mClockChannelInterface->SetChannel( mClockChannel );
+    mClockEdgeInterface->SetNumber( mClockEdge );
 }
 
 void SimpleParallelAnalyzerSettings::LoadSettings( const char* settings )
 {
-	SimpleArchive text_archive;
-	text_archive.SetString( settings );
+    SimpleArchive text_archive;
+    text_archive.SetString( settings );
 
-	U32 count = mDataChannels.size();
+    U32 count = mDataChannels.size();
 
-	for( U32 i=0; i<count; i++ )
-	{
-		text_archive >> mDataChannels[i];
-	}
+    for( U32 i = 0; i < count; i++ )
+    {
+        text_archive >> mDataChannels[ i ];
+    }
 
-	text_archive >> mClockChannel;
-	text_archive >> *(U32*)&mClockEdge;
+    text_archive >> mClockChannel;
+    text_archive >> *( U32* )&mClockEdge;
 
-	ClearChannels();
-	for( U32 i=0; i<count; i++ )
-	{
-		char text[64];
-		sprintf( text, "D%d", i );
-		AddChannel( mDataChannels[i], text, mDataChannels[i] != UNDEFINED_CHANNEL );
-	}
+    ClearChannels();
+    for( U32 i = 0; i < count; i++ )
+    {
+        char text[ 64 ];
+        sprintf( text, "D%d", i );
+        AddChannel( mDataChannels[ i ], text, mDataChannels[ i ] != UNDEFINED_CHANNEL );
+    }
 
-	AddChannel( mClockChannel, "Clock", true );
+    AddChannel( mClockChannel, "Clock", true );
 
-	UpdateInterfacesFromSettings();
+    UpdateInterfacesFromSettings();
 }
 
 const char* SimpleParallelAnalyzerSettings::SaveSettings()
 {
-	SimpleArchive text_archive;
+    SimpleArchive text_archive;
 
-		U32 count = mDataChannels.size();
+    U32 count = mDataChannels.size();
 
-	for( U32 i=0; i<count; i++ )
-	{
-		text_archive << mDataChannels[i];
-	}
+    for( U32 i = 0; i < count; i++ )
+    {
+        text_archive << mDataChannels[ i ];
+    }
 
-	text_archive << mClockChannel;
-	text_archive << mClockEdge;
+    text_archive << mClockChannel;
+    text_archive << mClockEdge;
 
-	return SetReturnString( text_archive.GetString() );
+    return SetReturnString( text_archive.GetString() );
 }
