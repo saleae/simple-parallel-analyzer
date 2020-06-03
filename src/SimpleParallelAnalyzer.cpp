@@ -117,6 +117,9 @@ void SimpleParallelAnalyzer::WorkerThread()
         last_frame = frame;
         // finally, add the frame
         mResults->AddFrame( frame );
+        FrameV2 frame_v2;
+        frame_v2.AddInteger( "data", result );
+        mResults->AddFrameV2( frame_v2, "data", frame.mStartingSampleInclusive, frame.mEndingSampleInclusive );
         mResults->CommitResults();
         ReportProgress( frame.mEndingSampleInclusive );
     }
