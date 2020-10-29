@@ -60,14 +60,14 @@ void SimpleParallelAnalyzer::WorkerThread()
             mClock->AdvanceToNextEdge();
     }
 
-
     mClock->AdvanceToNextEdge(); // this is the data-valid edge
 
     Frame last_frame;
-    bool added_last_frame = false;
+    bool is_first_frame = true;
     for( ;; )
     {
-        // here we found a rising edge at the mark. Add images to mResults
+        // We always start this loop on an active edge.
+
         U64 sample = mClock->GetSampleNumber();
         mResults->AddMarker( sample, clock_arrow, mSettings->mClockChannel );
 
@@ -83,44 +83,104 @@ void SimpleParallelAnalyzer::WorkerThread()
             mResults->AddMarker( sample, AnalyzerResults::Dot, mDataChannels[ i ] );
         }
 
+
+        FrameV2 frame_v2;
+        frame_v2.AddInteger( "data", result );
+
         Frame frame;
         frame.mData1 = result;
         frame.mFlags = 0;
         frame.mStartingSampleInclusive = sample;
 
-        if( added_last_frame ||
-            mClock->DoMoreTransitionsExistInCurrentData() ) // if this thread ever gets before the data worker thread then this condition
-                                                            // may hit before the end of the dataset which will only cause a problem if the
-                                                            // clock changed between packets. The last frame will use the old clock rate for
-                                                            // ending sample
+        // The code in these if/else blocks could be replaced with 2 `AdvanceToNextEdge` calls, but if no more transitions are encountered,
+        // the current state will never be output as a frame. These blocks will detect that case in the available data, and output a frame
+        // immediately, and then another one once the next active edge sample is known.
+        if( !mClock->DoMoreTransitionsExistInCurrentData() )
         {
-            // wait until there is another rising edge so we know the ending sample
+            // There are no transitions available in the current data. Estimate what the frame size might be as 10 if we haven't seen any
+            // frames yet, otherwise use 10% of the last frame size.
+            U64 estimated_frame_size = 10;
+            if( !is_first_frame )
+            {
+                U64 last_frame_sample_count = last_frame.mEndingSampleInclusive - last_frame.mStartingSampleInclusive + 1;
+                estimated_frame_size = last_frame_sample_count * 0.1;
+                if( estimated_frame_size == 0 )
+                {
+                    estimated_frame_size = 1;
+                }
+            }
+
+            // Make sure we haven't gone past the end of the _real_ frame. WouldAdvancingCauseTransition can block, in which case more
+            // transitions might show up.
+            if( mClock->WouldAdvancingCauseTransition( estimated_frame_size ) )
+            {
+                // Move to inactive edge
+                mClock->AdvanceToNextEdge();
+                if( mClock->DoMoreTransitionsExistInCurrentData() )
+                {
+                    // Move to active edge
+                    mClock->AdvanceToNextEdge();
+
+                    frame.mEndingSampleInclusive = mClock->GetSampleNumber() - 1;
+                    mResults->AddFrame( frame );
+                    mResults->AddFrameV2( frame_v2, "data", frame.mStartingSampleInclusive, frame.mEndingSampleInclusive );
+                    mResults->CommitResults();
+                }
+                else
+                {
+                    frame.mEndingSampleInclusive = mClock->GetSampleNumber() - 1;
+                    mResults->AddFrame( frame );
+                    mResults->AddFrameV2( frame_v2, "data", frame.mStartingSampleInclusive, frame.mEndingSampleInclusive );
+                    mResults->CommitResults();
+
+                    // Move to active edge
+                    mClock->AdvanceToNextEdge();
+                }
+            }
+            else
+            {
+                frame.mEndingSampleInclusive = sample + estimated_frame_size - 1;
+                mResults->AddFrame( frame );
+                mResults->AddFrameV2( frame_v2, "data", frame.mStartingSampleInclusive, frame.mEndingSampleInclusive );
+                mResults->CommitResults();
+
+                // Move to inactive edge, and then the active edge
+                mClock->AdvanceToNextEdge();
+                mClock->AdvanceToNextEdge();
+            }
+        }
+        else
+        {
+            // Move to inactive edge
             mClock->AdvanceToNextEdge();
 
             if( mClock->DoMoreTransitionsExistInCurrentData() )
             {
-                mClock->AdvanceToNextEdge(); // this is the data-valid edge
-                added_last_frame = false;
+                // Move to active edge
+                mClock->AdvanceToNextEdge();
+
+                frame.mEndingSampleInclusive = mClock->GetSampleNumber() - 1;
+                mResults->AddFrame( frame );
+                mResults->AddFrameV2( frame_v2, "data", frame.mStartingSampleInclusive, frame.mEndingSampleInclusive );
+                mResults->CommitResults();
             }
             else
-                added_last_frame = true;
+            {
+                frame.mEndingSampleInclusive = mClock->GetSampleNumber() - 1;
+                mResults->AddFrame( frame );
+                mResults->AddFrameV2( frame_v2, "data", frame.mStartingSampleInclusive, frame.mEndingSampleInclusive );
+                mResults->CommitResults();
 
-            frame.mEndingSampleInclusive = mClock->GetSampleNumber() - 1;
-        }
-        else
-        {
-            frame.mEndingSampleInclusive =
-                frame.mStartingSampleInclusive + ( last_frame.mEndingSampleInclusive - last_frame.mStartingSampleInclusive );
-            added_last_frame = true;
+                // Move to active edge
+                mClock->AdvanceToNextEdge();
+            }
         }
 
+        // Note: mClock should always be at an active edge at this point, and `frame` should have been added.
+
+        is_first_frame = false;
         last_frame = frame;
-        // finally, add the frame
-        mResults->AddFrame( frame );
-        FrameV2 frame_v2;
-        frame_v2.AddInteger( "data", result );
-        mResults->AddFrameV2( frame_v2, "data", frame.mStartingSampleInclusive, frame.mEndingSampleInclusive );
-        mResults->CommitResults();
+
         ReportProgress( frame.mEndingSampleInclusive );
     }
 }
