@@ -83,3 +83,14 @@ cmake ..
 ```
 
 Then, open the newly created solution file located here: `build\simple_parallel_analyzer.sln`
+
+
+## Output Frame Format
+  
+### Frame Type: `"data"`
+
+| Property | Type | Description |
+| :--- | :--- | :--- |
+| `data` | int | Data word, the width in bits is determined by the number of enabled data channels |
+
+A single parallel word
