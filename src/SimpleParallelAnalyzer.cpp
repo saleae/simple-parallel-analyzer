@@ -34,6 +34,7 @@ void SimpleParallelAnalyzer::WorkerThread()
     mClock = GetAnalyzerChannelData( mSettings->mClockChannel );
     mData.clear();
     mDataMasks.clear();
+    mDataChannels.clear();
 
     U32 count = mSettings->mDataChannels.size();
     for( U32 i = 0; i < count; i++ )
