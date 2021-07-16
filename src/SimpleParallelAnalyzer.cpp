@@ -141,6 +141,10 @@ void SimpleParallelAnalyzer::WorkerThread()
             else
             {
                 frame.mEndingSampleInclusive = sample + estimated_frame_size - 1;
+                if( frame.mEndingSampleInclusive <= frame.mStartingSampleInclusive )
+                {
+                    frame.mEndingSampleInclusive = frame.mStartingSampleInclusive + 1;
+                }
                 mResults->AddFrame( frame );
                 mResults->AddFrameV2( frame_v2, "data", frame.mStartingSampleInclusive, frame.mEndingSampleInclusive );
                 mResults->CommitResults();
