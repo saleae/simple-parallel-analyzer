@@ -105,9 +105,9 @@ void SimpleParallelAnalyzer::WorkerThread()
             {
                 U64 last_frame_sample_count = last_frame.mEndingSampleInclusive - last_frame.mStartingSampleInclusive + 1;
                 estimated_frame_size = last_frame_sample_count * 0.1;
-                if( estimated_frame_size == 0 )
+                if( estimated_frame_size < 3 )
                 {
-                    estimated_frame_size = 1;
+                    estimated_frame_size = 3;
                 }
             }
 
