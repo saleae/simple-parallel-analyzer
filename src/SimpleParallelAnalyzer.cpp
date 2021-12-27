@@ -6,6 +6,7 @@ SimpleParallelAnalyzer::SimpleParallelAnalyzer()
     : Analyzer2(), mSettings( new SimpleParallelAnalyzerSettings() ), mSimulationInitilized( false )
 {
     SetAnalyzerSettings( mSettings.get() );
+    UseFrameV2();
 }
 
 SimpleParallelAnalyzer::~SimpleParallelAnalyzer()
