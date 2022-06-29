@@ -25,8 +25,13 @@ class SimpleParallelAnalyzer : public Analyzer2
 #pragma warning(                                                                                                                           \
     disable : 4251 ) // warning C4251: 'SerialAnalyzer::<...>' : class <...> needs to have dll-interface to be used by clients of class
 
-    std::auto_ptr<SimpleParallelAnalyzerSettings> mSettings;
-    std::auto_ptr<SimpleParallelAnalyzerResults> mResults;
+    void DecodeBothEdges();
+    uint16_t GetWordAtLocation( uint64_t sample_number );
+    uint64_t AddFrame( uint16_t value, uint64_t starting_sample, uint64_t ending_sample );
+    int64_t mLastFrameWidth = -1; // holds the width of the last frame, in samples, or -1 if no previous frames created.
+
+    std::unique_ptr<SimpleParallelAnalyzerSettings> mSettings;
+    std::unique_ptr<SimpleParallelAnalyzerResults> mResults;
 
     std::vector<AnalyzerChannelData*> mData;
     std::vector<U16> mDataMasks;
