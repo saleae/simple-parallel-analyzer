@@ -4,6 +4,14 @@
 #include <AnalyzerSettings.h>
 #include <AnalyzerTypes.h>
 
+// originally from AnalyzerEnums::EdgeDirection { PosEdge, NegEdge };
+enum class ParallelAnalyzerClockEdge
+{
+    PosEdge = AnalyzerEnums::PosEdge,
+    NegEdge = AnalyzerEnums::NegEdge,
+    DualEdge
+};
+
 class SimpleParallelAnalyzerSettings : public AnalyzerSettings
 {
   public:
@@ -19,13 +27,13 @@ class SimpleParallelAnalyzerSettings : public AnalyzerSettings
     std::vector<Channel> mDataChannels;
     Channel mClockChannel;
 
-    AnalyzerEnums::EdgeDirection mClockEdge;
+    ParallelAnalyzerClockEdge mClockEdge;
 
   protected:
     std::vector<AnalyzerSettingInterfaceChannel*> mDataChannelsInterface;
 
-    std::auto_ptr<AnalyzerSettingInterfaceChannel> mClockChannelInterface;
-    std::auto_ptr<AnalyzerSettingInterfaceNumberList> mClockEdgeInterface;
+    std::unique_ptr<AnalyzerSettingInterfaceChannel> mClockChannelInterface;
+    std::unique_ptr<AnalyzerSettingInterfaceNumberList> mClockEdgeInterface;
 };
 
 #endif // SIMPLEPARALLEL_ANALYZER_SETTINGS
