@@ -7,24 +7,23 @@ class SimpleParallelAnalyzerSettings;
 
 class SimpleParallelSimulationDataGenerator
 {
-public:
-	SimpleParallelSimulationDataGenerator();
-	~SimpleParallelSimulationDataGenerator();
+  public:
+    SimpleParallelSimulationDataGenerator();
+    ~SimpleParallelSimulationDataGenerator();
 
-	void Initialize( U32 simulation_sample_rate, SimpleParallelAnalyzerSettings* settings );
-	U32 GenerateSimulationData( U64 newest_sample_requested, U32 sample_rate, SimulationChannelDescriptor** simulation_channel );
+    void Initialize( U32 simulation_sample_rate, SimpleParallelAnalyzerSettings* settings );
+    U32 GenerateSimulationData( U64 newest_sample_requested, U32 sample_rate, SimulationChannelDescriptor** simulation_channel );
 
-protected:
-	SimpleParallelAnalyzerSettings* mSettings;
-	U32 mSimulationSampleRateHz;
-	U16 mValue;
+  protected:
+    SimpleParallelAnalyzerSettings* mSettings;
+    U32 mSimulationSampleRateHz;
+    U16 mValue;
 
-protected:
+  protected:
+    SimulationChannelDescriptorGroup mSimulationData;
 
-	SimulationChannelDescriptorGroup mSimulationData;
-
-	std::vector< SimulationChannelDescriptor* > mData;
-	std::vector< U16 > mDataMasks;
-	SimulationChannelDescriptor* mClock;
+    std::vector<SimulationChannelDescriptor*> mData;
+    std::vector<U16> mDataMasks;
+    SimulationChannelDescriptor* mClock;
 };
-#endif //SIMPLEPARALLEL_SIMULATION_DATA_GENERATOR
+#endif // SIMPLEPARALLEL_SIMULATION_DATA_GENERATOR

@@ -8,7 +8,7 @@ Saleae Simple Parallel Analyzer
 
 Dependencies:
 - XCode with command line tools
-- CMake 3.11+
+- CMake 3.13+
 
 Installing command line tools after XCode is installed:
 ```
@@ -38,7 +38,7 @@ cmake --build .
 ### Ubuntu 16.04
 
 Dependencies:
-- CMake 3.11+
+- CMake 3.13+
 - gcc 4.8+
 
 Misc dependencies:
@@ -59,7 +59,7 @@ cmake --build .
 
 Dependencies:
 - Visual Studio 2015 Update 3
-- CMake 3.11+
+- CMake 3.13+
 
 **Visual Studio 2015**
 
@@ -78,8 +78,20 @@ https://cmake.org/download/
 Building the analyzer:
 ```
 mkdir build
-cd build
+cd build -A x64
 cmake ..
 ```
 
 Then, open the newly created solution file located here: `build\simple_parallel_analyzer.sln`
+
+
+## Output Frame Format
+  
+### Frame Type: `"data"`
+
+| Property | Type | Description |
+| :--- | :--- | :--- |
+| `data` | int | Data word, the width in bits is determined by the number of enabled data channels |
+
+A single parallel word
+
