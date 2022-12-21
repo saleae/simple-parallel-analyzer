@@ -43,6 +43,7 @@ jobs:
       run: |
         cmake -B ${{github.workspace}}/build -DCMAKE_BUILD_TYPE=Release
         cmake --build ${{github.workspace}}/build
+        ldd -v $(find ${{github.workspace}}/build/Analyzers -iname '*.so')
     - name: Upload Linux build
       uses: actions/upload-artifact@v2
       with:
