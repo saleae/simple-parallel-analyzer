@@ -58,7 +58,7 @@ void SimpleParallelAnalyzer::WorkerThread()
         if( mClock->GetBitState() == BIT_LOW )
             mClock->AdvanceToNextEdge();
     }
-    else if( mSettings->mClockEdge == ParallelAnalyzerClockEdge::NegEdge )
+    else if( mSettings->mClockEdge == ParallelAnalyzerClockEdge::PosEdge )
     {
         if( mClock->GetBitState() == BIT_HIGH )
             mClock->AdvanceToNextEdge();
