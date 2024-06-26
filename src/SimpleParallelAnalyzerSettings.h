@@ -26,6 +26,7 @@ class SimpleParallelAnalyzerSettings : public AnalyzerSettings
 
     std::vector<Channel> mDataChannels;
     Channel mClockChannel;
+    Channel mChipSelectChannel;
 
     ParallelAnalyzerClockEdge mClockEdge;
 
@@ -33,6 +34,7 @@ class SimpleParallelAnalyzerSettings : public AnalyzerSettings
     std::vector<AnalyzerSettingInterfaceChannel*> mDataChannelsInterface;
 
     std::unique_ptr<AnalyzerSettingInterfaceChannel> mClockChannelInterface;
+    std::unique_ptr<AnalyzerSettingInterfaceChannel> mChipSelectChannelInterface;
     std::unique_ptr<AnalyzerSettingInterfaceNumberList> mClockEdgeInterface;
 };
 
