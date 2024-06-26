@@ -37,6 +37,7 @@ class SimpleParallelAnalyzer : public Analyzer2
     std::vector<U16> mDataMasks;
     std::vector<Channel> mDataChannels;
     AnalyzerChannelData* mClock;
+    AnalyzerChannelData* mChipSelect;
 
     SimpleParallelSimulationDataGenerator mSimulationDataGenerator;
     bool mSimulationInitilized;
