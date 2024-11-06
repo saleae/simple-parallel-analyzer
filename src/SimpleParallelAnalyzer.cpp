@@ -258,7 +258,10 @@ void SimpleParallelAnalyzer::DecodeBothEdges()
         if( has_pending_frame )
         {
             // store the previous frame.
-            progress_update = AddFrame( previous_value, previous_sample, location - 1 );
+            // If we're getting a transition on every sample, we should ensure that each frame is at least 1
+            // sample wide, to avoid 0 length frames, which are hidden in the UI.
+            uint64_t ending_sample_inclusive = std::max<uint64_t>( location - 1, previous_sample + 1 );
+            progress_update = AddFrame( previous_value, previous_sample, ending_sample_inclusive );
             has_pending_frame = false;
         }
         if( found_next_edge )
