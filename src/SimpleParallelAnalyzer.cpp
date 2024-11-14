@@ -258,7 +258,8 @@ void SimpleParallelAnalyzer::DecodeBothEdges()
         if( has_pending_frame )
         {
             // store the previous frame.
-            progress_update = AddFrame( previous_value, previous_sample, location - 1 );
+            uint64_t ending_sample_inclusive = location;
+            progress_update = AddFrame( previous_value, previous_sample, ending_sample_inclusive );
             has_pending_frame = false;
         }
         if( found_next_edge )
