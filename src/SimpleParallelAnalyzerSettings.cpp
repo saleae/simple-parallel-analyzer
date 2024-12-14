@@ -95,7 +95,6 @@ bool SimpleParallelAnalyzerSettings::SetSettingsFromInterfaces()
         SetErrorText( "Please select at least one channel to use in the parallel bus" );
         return false;
     }
-    mDataBits = num_used_channels;
 
     for( U32 i = 0; i < count; i++ )
     {
