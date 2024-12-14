@@ -124,8 +124,6 @@ void SimpleParallelAnalyzerSettings::UpdateInterfacesFromSettings()
     for( U32 i = 0; i < count; i++ )
     {
         mDataChannelsInterface[ i ]->SetChannel( mDataChannels[ i ] );
-        if( mDataChannels[ i ] != UNDEFINED_CHANNEL )
-            num_used_channels++;
     }
     mDataBits = MostSiginificantBitPosition() + 1;
 
