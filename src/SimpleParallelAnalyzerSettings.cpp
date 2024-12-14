@@ -23,6 +23,7 @@ SimpleParallelAnalyzerSettings::SimpleParallelAnalyzerSettings()
 
         mDataChannelsInterface.push_back( data_channel_interface );
     }
+    mDataBits = 0;
 
 
     mClockChannelInterface.reset( new AnalyzerSettingInterfaceChannel() );
@@ -82,6 +83,7 @@ bool SimpleParallelAnalyzerSettings::SetSettingsFromInterfaces()
         SetErrorText( "Please select at least one channel to use in the parallel bus" );
         return false;
     }
+    mDataBits = num_used_channels;
 
     for( U32 i = 0; i < count; i++ )
     {
@@ -107,10 +109,14 @@ bool SimpleParallelAnalyzerSettings::SetSettingsFromInterfaces()
 void SimpleParallelAnalyzerSettings::UpdateInterfacesFromSettings()
 {
     U32 count = mDataChannels.size();
+    U32 num_used_channels = 0;
     for( U32 i = 0; i < count; i++ )
     {
         mDataChannelsInterface[ i ]->SetChannel( mDataChannels[ i ] );
+        if( mDataChannels[ i ] != UNDEFINED_CHANNEL )
+            num_used_channels++;
     }
+    mDataBits = num_used_channels;
 
     mClockChannelInterface->SetChannel( mClockChannel );
     mClockEdgeInterface->SetNumber( static_cast<double>( mClockEdge ) );
@@ -122,11 +128,14 @@ void SimpleParallelAnalyzerSettings::LoadSettings( const char* settings )
     text_archive.SetString( settings );
 
     U32 count = mDataChannels.size();
-
+    U32 num_used_channels = 0;
     for( U32 i = 0; i < count; i++ )
     {
         text_archive >> mDataChannels[ i ];
+        if( mDataChannels[ i ] != UNDEFINED_CHANNEL )
+            num_used_channels++;
     }
+    mDataBits = num_used_channels;
 
     text_archive >> mClockChannel;
     U32 edge;

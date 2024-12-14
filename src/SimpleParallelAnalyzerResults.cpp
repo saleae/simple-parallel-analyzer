@@ -21,7 +21,7 @@ void SimpleParallelAnalyzerResults::GenerateBubbleText( U64 frame_index, Channel
     Frame frame = GetFrame( frame_index );
 
     char number_str[ 128 ];
-    AnalyzerHelpers::GetNumberString( frame.mData1, display_base, 16, number_str, 128 );
+    AnalyzerHelpers::GetNumberString( frame.mData1, display_base, mSettings->dataBits(), number_str, 128 );
     AddResultString( number_str );
 }
 
@@ -44,7 +44,7 @@ void SimpleParallelAnalyzerResults::GenerateExportFile( const char* file, Displa
         AnalyzerHelpers::GetTimeString( frame.mStartingSampleInclusive, trigger_sample, sample_rate, time_str, 128 );
 
         char number_str[ 128 ];
-        AnalyzerHelpers::GetNumberString( frame.mData1, display_base, 16, number_str, 128 );
+        AnalyzerHelpers::GetNumberString( frame.mData1, display_base, mSettings->dataBits(), number_str, 128 );
 
         ss << time_str << "," << number_str << std::endl;
 
