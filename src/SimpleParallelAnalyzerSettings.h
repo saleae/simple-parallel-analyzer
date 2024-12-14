@@ -34,6 +34,8 @@ class SimpleParallelAnalyzerSettings : public AnalyzerSettings
     ParallelAnalyzerClockEdge mClockEdge;
 
   protected:
+    U32 MostSiginificantBitPosition() const;
+
     std::vector<AnalyzerSettingInterfaceChannel*> mDataChannelsInterface;
 
     std::unique_ptr<AnalyzerSettingInterfaceChannel> mClockChannelInterface;
