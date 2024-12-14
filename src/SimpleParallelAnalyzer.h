@@ -1,6 +1,7 @@
 #ifndef SIMPLEPARALLEL_ANALYZER_H
 #define SIMPLEPARALLEL_ANALYZER_H
 
+#include <cstdint>
 #include <Analyzer.h>
 #include "SimpleParallelAnalyzerResults.h"
 #include "SimpleParallelSimulationDataGenerator.h"
