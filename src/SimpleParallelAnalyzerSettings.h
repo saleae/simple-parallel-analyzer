@@ -22,6 +22,10 @@ class SimpleParallelAnalyzerSettings : public AnalyzerSettings
     void UpdateInterfacesFromSettings();
     virtual void LoadSettings( const char* settings );
     virtual const char* SaveSettings();
+    U32 dataBits() const
+    {
+        return mDataBits;
+    }
 
 
     std::vector<Channel> mDataChannels;
@@ -30,10 +34,14 @@ class SimpleParallelAnalyzerSettings : public AnalyzerSettings
     ParallelAnalyzerClockEdge mClockEdge;
 
   protected:
+    U32 MostSiginificantBitPosition() const;
+
     std::vector<AnalyzerSettingInterfaceChannel*> mDataChannelsInterface;
 
     std::unique_ptr<AnalyzerSettingInterfaceChannel> mClockChannelInterface;
     std::unique_ptr<AnalyzerSettingInterfaceNumberList> mClockEdgeInterface;
+
+    U32 mDataBits; // valid channel number of mDataChannels
 };
 
 #endif // SIMPLEPARALLEL_ANALYZER_SETTINGS

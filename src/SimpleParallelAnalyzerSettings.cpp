@@ -23,6 +23,7 @@ SimpleParallelAnalyzerSettings::SimpleParallelAnalyzerSettings()
 
         mDataChannelsInterface.push_back( data_channel_interface );
     }
+    mDataBits = 0;
 
 
     mClockChannelInterface.reset( new AnalyzerSettingInterfaceChannel() );
@@ -67,6 +68,18 @@ SimpleParallelAnalyzerSettings::~SimpleParallelAnalyzerSettings()
         delete mDataChannelsInterface[ i ];
 }
 
+U32 SimpleParallelAnalyzerSettings::MostSiginificantBitPosition() const
+{
+    const U32 count = mDataChannels.size();
+    U32 most_significant_bit = 0;
+    for( U32 i = 0; i < count; i++ )
+    {
+        if( mDataChannels[ i ] != UNDEFINED_CHANNEL && most_significant_bit < i )
+            most_significant_bit = i;
+    }
+    return most_significant_bit;
+}
+
 bool SimpleParallelAnalyzerSettings::SetSettingsFromInterfaces()
 {
     U32 count = mDataChannels.size();
@@ -82,11 +95,13 @@ bool SimpleParallelAnalyzerSettings::SetSettingsFromInterfaces()
         SetErrorText( "Please select at least one channel to use in the parallel bus" );
         return false;
     }
+    mDataBits = num_used_channels;
 
     for( U32 i = 0; i < count; i++ )
     {
         mDataChannels[ i ] = mDataChannelsInterface[ i ]->GetChannel();
     }
+    mDataBits = MostSiginificantBitPosition() + 1;
 
     mClockChannel = mClockChannelInterface->GetChannel();
     mClockEdge = static_cast<ParallelAnalyzerClockEdge>( U32( mClockEdgeInterface->GetNumber() ) );
@@ -110,7 +125,10 @@ void SimpleParallelAnalyzerSettings::UpdateInterfacesFromSettings()
     for( U32 i = 0; i < count; i++ )
     {
         mDataChannelsInterface[ i ]->SetChannel( mDataChannels[ i ] );
+        if( mDataChannels[ i ] != UNDEFINED_CHANNEL )
+            num_used_channels++;
     }
+    mDataBits = MostSiginificantBitPosition() + 1;
 
     mClockChannelInterface->SetChannel( mClockChannel );
     mClockEdgeInterface->SetNumber( static_cast<double>( mClockEdge ) );
@@ -127,6 +145,7 @@ void SimpleParallelAnalyzerSettings::LoadSettings( const char* settings )
     {
         text_archive >> mDataChannels[ i ];
     }
+    mDataBits = MostSiginificantBitPosition() + 1;
 
     text_archive >> mClockChannel;
     U32 edge;
