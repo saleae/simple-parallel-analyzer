@@ -3,6 +3,7 @@
 #include "SimpleParallelAnalyzer.h"
 #include "SimpleParallelAnalyzerSettings.h"
 #include <iostream>
+#include <iomanip>
 #include <sstream>
 #include <stdio.h>
 
@@ -21,7 +22,19 @@ void SimpleParallelAnalyzerResults::GenerateBubbleText( U64 frame_index, Channel
     Frame frame = GetFrame( frame_index );
 
     char number_str[ 128 ];
-    AnalyzerHelpers::GetNumberString( frame.mData1, display_base, mSettings->dataBits(), number_str, 128 );
+    if( display_base == Hexadecimal )
+    {
+        U32 num_places = mSettings->dataBits() / 4;
+        if( ( mSettings->dataBits() % 4 ) != 0 )
+            num_places++;
+        std::stringstream ss;
+        ss << std::hex << std::setw( num_places ) << std::setfill( '0' ) << std::uppercase << frame.mData1;
+        strcpy( number_str, ss.str().c_str() );
+    }
+    else
+    {
+        AnalyzerHelpers::GetNumberString( frame.mData1, display_base, mSettings->dataBits(), number_str, 128 );
+    }
     AddResultString( number_str );
 }
 
